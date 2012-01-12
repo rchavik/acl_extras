@@ -1,0 +1,9 @@
+div.level-2 { margin-left: 60px; }
+
+.plugin-controller.controller-row { background: #6f6f6f; color: #fff; font-weight: bold; }
+.plugin-row { background: #444; color: #fff; font-weight: bold; }
+
+table .controller-row a { color: #efefef; }
+table .controller:hover { cursor: pointer; }
+.plugin-row,.controller-row a { color: #efefef; }
+.plugin:hover,.controller:hover { cursor: pointer; }

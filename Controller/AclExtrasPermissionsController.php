@@ -12,13 +12,7 @@
  * @link     http://www.croogo.org
  */
 class AclExtrasPermissionsController extends AclExtrasAppController {
-/**
- * Controller name
- *
- * @var string
- * @access public
- */
-    public $name = 'AclPermissions';
+
 /**
  * Models used by the Controller
  *
@@ -26,27 +20,27 @@ class AclExtrasPermissionsController extends AclExtrasAppController {
  * @access public
  */
     public $uses = array(
-        'Acl.AclAco',
-        'Acl.AclAro',
-        'Acl.AclArosAco',
+        'AclExtras.AclExtrasAco',
+        'AclExtras.AclExtrasAro',
+        'AclExtras.AclExtrasArosAco',
         'Role',
     );
 
     public function admin_index() {
         $this->set('title_for_layout', __('Permissions', true));
 
-        $acos = $this->AclFilter->acoTreelist();
+        $acos = $this->AclExtrasFilter->acoTreelist();
         $roles = $this->Role->find('list');
 
         $this->set(compact('acos', 'roles'));
 
-        $rolesAros = $this->AclAro->find('all', array(
+        $rolesAros = $this->AclExtrasAro->find('all', array(
             'conditions' => array(
-                'AclAro.model' => 'Role',
-                'AclAro.foreign_key' => array_keys($roles),
+                'AclExtrasAro.model' => 'Role',
+                'AclExtrasAro.foreign_key' => array_keys($roles),
             ),
         ));
-        $rolesAros = Set::combine($rolesAros, '{n}.AclAro.foreign_key', '{n}.AclAro.id');
+        $rolesAros = Set::combine($rolesAros, '{n}.AclExtrasAro.foreign_key', '{n}.AclExtrasAro.id');
 
         $permissions = array(); // acoId => roleId => bool
         foreach ($acos AS $acoId => $aco) {
@@ -61,7 +55,7 @@ class AclExtrasPermissionsController extends AclExtrasAppController {
                         '_update' => 1,
                         '_delete' => 1,
                     );
-                    if ($this->AclArosAco->hasAny($hasAny)) {
+                    if ($this->AclExtrasArosAco->hasAny($hasAny)) {
                         $permission[$roleId] = 1;
                     } else {
                         $permission[$roleId] = 0;
@@ -80,43 +74,43 @@ class AclExtrasPermissionsController extends AclExtrasAppController {
 
         // see if acoId and aroId combination exists
         $conditions = array(
-            'AclArosAco.aco_id' => $acoId,
-            'AclArosAco.aro_id' => $aroId,
+            'AclExtrasArosAco.aco_id' => $acoId,
+            'AclExtrasArosAco.aro_id' => $aroId,
         );
-        if ($this->AclArosAco->hasAny($conditions)) {
-            $data = $this->AclArosAco->find('first', array('conditions' => $conditions));
-            if ($data['AclArosAco']['_create'] == 1 &&
-                $data['AclArosAco']['_read'] == 1 &&
-                $data['AclArosAco']['_update'] == 1 &&
-                $data['AclArosAco']['_delete'] == 1) {
+        if ($this->AclExtrasArosAco->hasAny($conditions)) {
+            $data = $this->AclExtrasArosAco->find('first', array('conditions' => $conditions));
+            if ($data['AclExtrasArosAco']['_create'] == 1 &&
+                $data['AclExtrasArosAco']['_read'] == 1 &&
+                $data['AclExtrasArosAco']['_update'] == 1 &&
+                $data['AclExtrasArosAco']['_delete'] == 1) {
                 // from 1 to 0
-                $data['AclArosAco']['_create'] = 0;
-                $data['AclArosAco']['_read'] = 0;
-                $data['AclArosAco']['_update'] = 0;
-                $data['AclArosAco']['_delete'] = 0;
+                $data['AclExtrasArosAco']['_create'] = 0;
+                $data['AclExtrasArosAco']['_read'] = 0;
+                $data['AclExtrasArosAco']['_update'] = 0;
+                $data['AclExtrasArosAco']['_delete'] = 0;
                 $permitted = 0;
             } else {
                 // from 0 to 1
-                $data['AclArosAco']['_create'] = 1;
-                $data['AclArosAco']['_read'] = 1;
-                $data['AclArosAco']['_update'] = 1;
-                $data['AclArosAco']['_delete'] = 1;
+                $data['AclExtrasArosAco']['_create'] = 1;
+                $data['AclExtrasArosAco']['_read'] = 1;
+                $data['AclExtrasArosAco']['_update'] = 1;
+                $data['AclExtrasArosAco']['_delete'] = 1;
                 $permitted = 1;
             }
         } else {
             // create - CRUD with 1
-            $data['AclArosAco']['aco_id'] = $acoId;
-            $data['AclArosAco']['aro_id'] = $aroId;
-            $data['AclArosAco']['_create'] = 1;
-            $data['AclArosAco']['_read'] = 1;
-            $data['AclArosAco']['_update'] = 1;
-            $data['AclArosAco']['_delete'] = 1;
+            $data['AclExtrasArosAco']['aco_id'] = $acoId;
+            $data['AclExtrasArosAco']['aro_id'] = $aroId;
+            $data['AclExtrasArosAco']['_create'] = 1;
+            $data['AclExtrasArosAco']['_read'] = 1;
+            $data['AclExtrasArosAco']['_update'] = 1;
+            $data['AclExtrasArosAco']['_delete'] = 1;
             $permitted = 1;
         }
 
         // save
         $success = 0;
-        if ($this->AclArosAco->save($data)) {
+        if ($this->AclExtrasArosAco->save($data)) {
             $success = 1;
         }
 
@@ -124,7 +118,7 @@ class AclExtrasPermissionsController extends AclExtrasAppController {
     }
     
     function admin_upgrade() {
-        App::import('Component', 'Acl.AclUpgrade');
+        App::import('Component', 'AclExtras.AclExtrasUpgrade');
         $this->AclUpgrade = new AclUpgradeComponent;
         $this->AclUpgrade->initialize($this);
         if (($errors = $this->AclUpgrade->upgrade()) === true) {
@@ -140,4 +134,3 @@ class AclExtrasPermissionsController extends AclExtrasAppController {
     }
 
 }
-?>

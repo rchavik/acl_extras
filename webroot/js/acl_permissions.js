@@ -35,7 +35,7 @@ AclPermissions.permissionToggle = function() {
         $this.attr('src', Croogo.basePath+'img/ajax/circle_ball.gif');
 
         // prepare loadUrl
-        var loadUrl = Croogo.basePath+'admin/acl/acl_permissions/toggle/';
+        var loadUrl = Croogo.basePath+'admin/acl_extras/acl_extras_permissions/toggle/';
         loadUrl    += acoId+'/'+aroId+'/';
 
         // now load it
@@ -85,7 +85,7 @@ AclPermissions.tableToggle = function() {
  * @return void
  */
 $(document).ready(function() {
-    if (Croogo.params.controller == 'acl_permissions') {
+    if (Croogo.params.controller == 'acl_extras_permissions') {
         AclPermissions.documentReady();
     }
 });

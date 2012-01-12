@@ -11,7 +11,7 @@
  * @license  http://www.opensource.org/licenses/mit-license.php The MIT License
  * @link	 http://www.croogo.org
  */
-class AclFilterComponent extends Component {
+class AclExtrasFilterComponent extends Component {
 
 	protected $controller = null;
 
@@ -45,7 +45,7 @@ class AclFilterComponent extends Component {
 		$actionPath = 'controllers';
 		$this->controller->Auth->authorize = array(
 			AuthComponent::ALL => array('actionPath' => $actionPath),
-			'Acl.AclCached',
+			'AclExtras.AclExtrasCached',
 			);
 		$this->controller->Auth->loginAction = array(
 			'plugin' => null,
@@ -132,7 +132,7 @@ class AclFilterComponent extends Component {
 
 /** __formatAcoTree
  *
- *  Internally used by AclFilter::acoTreelist.
+ *  Internally used by AclExtrasFilter::acoTreelist.
  *  An extra field is created for the number of children for each ACO.
  *
  *  @param tree tree/subtree of ACOs retrieved via find('threaded')

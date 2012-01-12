@@ -12,14 +12,13 @@
  * @link	 http://www.croogo.org
  */
 class AclExtrasActionsController extends AclExtrasAppController {
-	public $name = 'AclActions';
-	public $uses = array('Acl.AclAco');
-	public $components = array('Acl.AclGenerate');
+	public $uses = array('AclExtras.AclAco');
+	public $components = array('AclExtras.AclExtrasGenerate');
 
 	public function admin_index() {
 		$this->set('title_for_layout', __('Actions'));
 
-		$this->set('acos', $this->AclFilter->acoTreelist());
+		$this->set('acos', $this->AclExtrasFilter->acoTreelist());
 	}
 
 	public function admin_add() {
@@ -44,7 +43,7 @@ class AclExtrasActionsController extends AclExtrasAppController {
 			}
 		}
 
-		$acos = $this->AclFilter->acoTreelist();
+		$acos = $this->AclExtrasFilter->acoTreelist();
 		$this->set(compact('acos'));
 	}
 
@@ -67,7 +66,7 @@ class AclExtrasActionsController extends AclExtrasAppController {
 			$this->data = $this->Acl->Aco->read(null, $id);
 		}
 
-		$acos = $this->AclFilter->acoTreelist();
+		$acos = $this->AclExtrasFilter->acoTreelist();
 		$this->set(compact('acos'));
 	}
 
@@ -115,7 +114,7 @@ class AclExtrasActionsController extends AclExtrasAppController {
 			$root = $root[0];
 		}
 
-		$controllerPaths = $this->AclGenerate->listControllers();
+		$controllerPaths = $this->AclExtrasGenerate->listControllers();
 		foreach ($controllerPaths AS $controllerName => $controllerPath) {
 			$parentAco = $root['Aco']['id'];
 			if (strpos($controllerName, '/') !== false) {
@@ -156,7 +155,7 @@ class AclExtrasActionsController extends AclExtrasAppController {
 				$controllerNode = $controllerNode[0];
 			}
 
-			$methods = $this->AclGenerate->listActions($controllerName, $controllerPath);
+			$methods = $this->AclExtrasGenerate->listActions($controllerName, $controllerPath);
 			foreach ($methods AS $method) {
 				$methodNode = $aco->node('controllers/'.$controllerName.'/'.$method);
 				if (!$methodNode) {

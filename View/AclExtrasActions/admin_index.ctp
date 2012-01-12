@@ -1,5 +1,4 @@
 <?php
-    $this->Html->script('/acl/js/acl_permissions.js', false);
     $this->Html->scriptBlock("$(document).ready(function(){ AclPermissions.documentReady(); });", array('inline' => false));
 ?>
 <div class="acos index">

@@ -1,5 +1,7 @@
 <?php
 
+Croogo::hookHelper('*', 'AclExtras.AclExtras');
+
 CroogoNav::remove('users.children.permissions');
 
 CroogoNav::add('users.children.permissions', array(

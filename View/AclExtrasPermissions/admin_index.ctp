@@ -1,14 +1,11 @@
-<?php
-    $this->Html->script('/acl/js/acl_permissions.js', false);
-?>
 <div class="acl_permissions index">
     <h2><?php echo $title_for_layout; ?></h2>
 
     <div class="actions">
         <ul>
-            <li><?php echo $this->Html->link(__('Generate Actions'), array('controller' => 'acl_actions', 'action'=>'generate', 'permissions' => 1)); ?></li>
-            <li><?php echo $this->Html->link(__('Edit Actions'), array('controller' => 'acl_actions', 'action'=>'index', 'permissions' => 1)); ?></li>
-            <li><?php echo $this->Html->link(__('Upgrade Acl for Standard Plugins'), array('controller' => 'acl_permissions', 'action'=>'upgrade')); ?></li>
+            <li><?php echo $this->Html->link(__('Generate Actions'), array('controller' => 'acl_extras_actions', 'action'=>'generate', 'permissions' => 1)); ?></li>
+            <li><?php echo $this->Html->link(__('Edit Actions'), array('controller' => 'acl_extras_actions', 'action'=>'index', 'permissions' => 1)); ?></li>
+            <li><?php echo $this->Html->link(__('Upgrade Acl for Standard Plugins'), array('controller' => 'acl_extras_permissions', 'action'=>'upgrade')); ?></li>
         </ul>
     </div>
 

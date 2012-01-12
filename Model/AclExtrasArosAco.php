@@ -5,11 +5,11 @@ class AclExtrasArosAco extends AclExtrasAppModel {
 
 	var $belongsTo = array(
 	    'AclAro' => array(
-	        'className' => 'AclExtras.AclAro',
+	        'className' => 'AclExtras.AclExtrasAro',
 	        'foreignKey' => 'aro_id',
 	    ),
 	    'AclAco' => array(
-	        'className' => 'AclExtras.AclAco',
+	        'className' => 'AclExtras.AclExtrasAco',
 	        'foreignKey' => 'aco_id',
 	    ),
 	);
