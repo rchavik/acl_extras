@@ -100,6 +100,9 @@ class AclExtrasActionsController extends AclExtrasAppController {
 	}
 
 	public function admin_generate() {
+		$this->Session->setFlash('Feature disabled.  Use `cake acl_extras.acl_extras aco_sync` shell command');
+		$this->redirect(array('action' => 'index'));
+
 		$aco =& $this->Acl->Aco;
 		$root = $aco->node('controllers');
 		if (!$root) {
