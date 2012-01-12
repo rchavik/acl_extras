@@ -7,11 +7,22 @@ class AclExtrasActivation {
 	}
 
 	public function onActivation($controller) {
-		//$controller->Setting->write('Site.acl_plugin', 'Acl', array('editable' => 1, 'title' => 'Acl Plugin'));
 	}
 
 	public function beforeDeactivation($controller) {
-		return true;
+		if (Configure::read('Site.acl_plugin') == 'AclExtras') {
+			// plugin in use
+			return false;
+		}
+		$loaded = CakePlugin::loaded();
+		$leftovers = array_diff($loaded, array('AclExtras'));
+		foreach ($leftovers as $plugin) {
+			// only allow deactivation when alternate Acl plugin is active
+			if (preg_match('/^Acl/', $plugin)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function onDeactivation($controller) {
