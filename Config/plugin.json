@@ -1,0 +1,13 @@
+{
+	"name": "AclExtras",
+	"description": "AclExtras plugin for Croogo",
+
+	"author": "Rachman Chavik",
+	"authorEmail": "rchavik@xintesa.com",
+
+	"dependencies": {
+		"plugins": [
+			"Extensions"
+			]
+		}
+}
