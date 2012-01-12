@@ -33,27 +33,27 @@ class AclExtrasGenerateComponent extends Component {
 	public function listControllers() {
 		$controllerPaths = array();
 
-		// app/controllers
-		$this->folder->path = APP.'controllers'.DS;
+		// app/Controller
+		$this->folder->path = APP.'Controller'.DS;
 		$controllers = $this->folder->read();
 		foreach ($controllers['1'] AS $c) {
 			if (substr($c, strlen($c) - 4, 4) == '.php') {
-				$cName = Inflector::camelize(str_replace('_controller.php', '', $c));
-				$controllerPaths[$cName] = APP.'controllers'.DS.$c;
+				$cName = Inflector::camelize(str_replace('Controller.php', '', $c));
+				$controllerPaths[$cName] = APP.'Controller'.DS.$c;
 			}
 		}
 
-		// plugins/*/controllers/
-		$this->folder->path = APP.'plugins'.DS;
+		// Plugin/*/Controller/
+		$this->folder->path = APP.'Plugin'.DS;
 		$plugins = $this->folder->read();
 		foreach ($plugins['0'] AS $p) {
-			if ($p != 'install') {
-				$this->folder->path = APP.'plugins'.DS.$p.DS.'controllers'.DS;
+			if ($p != 'Install') {
+				$this->folder->path = APP.'Plugin'.DS.$p.DS.'Controller'.DS;
 				$pluginControllers = $this->folder->read();
 				foreach ($pluginControllers['1'] AS $pc) {
 					if (substr($pc, strlen($pc) - 4, 4) == '.php') {
-						$pcName = Inflector::camelize($p) .'/'. Inflector::camelize(str_replace('_controller.php', '', $pc));
-						$controllerPaths[$pcName] = APP.'plugins'.DS.$p.DS.'controllers'.DS.$pc;
+						$pcName = Inflector::camelize($p) .'/'. Inflector::camelize(str_replace('Controller.php', '', $pc));
+						$controllerPaths[$pcName] = APP.'Plugin'.DS.$p.DS.'Controller'.DS.$pc;
 					}
 				}
 			}
@@ -73,10 +73,10 @@ class AclExtrasGenerateComponent extends Component {
  */
 	public function listActions($name, $path) {
 		// base methods
-		if (strstr($path, APP .'plugins')) {
+		if (strstr($path, APP .'Plugin')) {
 			$plugin = $this->getPluginFromPath($path);
 			$pacName = Inflector::camelize($plugin) . 'AppController'; // pac - PluginAppController
-			$pacPath = APP.'plugins'.DS.$plugin.DS.$plugin.'_app_controller.php';
+			$pacPath = APP.'Plugin'.DS.$plugin.DS.$plugin.'AppController.php';
 			App::import('Controller', $pacName, null, null, $pacPath);
 			$baseMethods = get_class_methods($pacName);
 		} else {
@@ -116,7 +116,7 @@ class AclExtrasGenerateComponent extends Component {
  */
 	public function getPluginFromPath($path) {
 		$pathE = explode(DS, $path);
-		$pluginsK = array_search('plugins', $pathE);
+		$pluginsK = array_search('Plugin', $pathE);
 		$pluginNameK = $pluginsK + 1;
 		$plugin = $pathE[$pluginNameK];
 
