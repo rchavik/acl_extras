@@ -65,7 +65,7 @@
             foreach ($roles AS $roleId => $roleTitle) {
                 if ($aco['type'] == 'action') {
                     if ($roleId != 1) {
-                        if ($permissions[$id][$roleId] == 1) {
+                        if (isset($permissions[$id]) && $permissions[$id][$roleId] == 1) {
                             $row[] = $this->Html->image('/img/icons/tick.png', array('class' => 'permission-toggle', 'rel' => $id.'-'.$rolesAros[$roleId]));
                         } else {
                             $row[] = $this->Html->image('/img/icons/cross.png', array('class' => 'permission-toggle', 'rel' => $id.'-'.$rolesAros[$roleId]));
