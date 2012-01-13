@@ -194,6 +194,7 @@ class AclExtrasFilterComponent extends Component {
 			}
 		}
 
+		$plugins = array_keys($this->controller->Croogo->getPlugins());
 		// now that we have count of children and grandchildren, populate the rest of fields
 		foreach ($acos  as $id => &$aco) {
 			$path = $aco['path'];
@@ -201,7 +202,11 @@ class AclExtrasFilterComponent extends Component {
 
 			// determine type of ACO
 			if ($childcount == 0) {
-				$type = 'action';
+				if (in_array($path, $plugins)) {
+					$type = 'plugin';
+				} else {
+					$type = 'action';
+				}
 			} else {
 				if ($aco['grandchildren'] > 0) {
 					$type = 'plugin';
