@@ -21,6 +21,7 @@ App::uses('Controller', 'Controller');
 App::uses('ComponentCollection', 'Controller');
 App::uses('AclComponent', 'Controller/Component');
 App::uses('DbAcl', 'Model');
+App::uses('Shell', 'Console');
 
 /**
  * Shell for ACO extras
@@ -28,7 +29,7 @@ App::uses('DbAcl', 'Model');
  * @package		acl_extras
  * @subpackage	acl_extras.Console.Command
  */
-class AclExtrasShell extends Shell {
+class AclExtras extends Object {
 /**
  * Contains instance of AclComponent
  *
@@ -72,13 +73,28 @@ class AclExtrasShell extends Shell {
  *
  * @return void
  **/
-	public function startup() {
-		parent::startup();
+	public function startup($controller = null) {
 		$collection = new ComponentCollection();
 		$this->Acl = new AclComponent($collection);
-		$controller = null;
 		$this->Acl->startup($controller);
 		$this->Aco = $this->Acl->Aco;
+		$this->controller = $controller;
+	}
+
+	public function out($msg) {
+		if (!empty($this->controller)) {
+			$this->controller->Session->setFlash($msg);
+		} else {
+			return $this->Shell->out($msg);
+		}
+	}
+
+	public function err($msg) {
+		if (!empty($this->controller)) {
+			$this->controller->Session->setFlash($msg);
+		} else {
+			return $this->Shell->err($msg);
+		}
 	}
 
 /**
@@ -235,40 +251,6 @@ class AclExtrasShell extends Shell {
 			}
 		}
 		return true;
-	}
-
-	public function getOptionParser() {
-		return parent::getOptionParser()
-			->description(__("Better manage, and easily synchronize you application's ACO tree"))
-			->addSubcommand('aco_update', array(
-				'help' => __('Add new ACOs for new controllers and actions. Does not remove nodes from the ACO table.')
-			))->addSubcommand('aco_sync', array(
-				'help' => __('Perform a full sync on the ACO table.' .
-					'Will create new ACOs or missing controllers and actions.' .
-					'Will also remove orphaned entries that no longer have a matching controller/action')
-			))->addSubcommand('verify', array(
-				'help' => __('Verify the tree structure of either your Aco or Aro Trees'),
-				'parser' => array(
-					'arguments' => array(
-						'type' => array(
-							'required' => true,
-							'help' => __('The type of tree to verify'),
-							'choices' => array('aco', 'aro')
-						)
-					)
-				)
-			))->addSubcommand('recover', array(
-				'help' => __('Recover a corrupted Tree'),
-				'parser' => array(
-					'arguments' => array(
-						'type' => array(
-							'required' => true,
-							'help' => __('The type of tree to recover'),
-							'choices' => array('aco', 'aro')
-						)
-					)
-				)
-			));
 	}
 
 /**
