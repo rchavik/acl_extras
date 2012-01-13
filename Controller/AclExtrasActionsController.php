@@ -100,80 +100,13 @@ class AclExtrasActionsController extends AclExtrasAppController {
 	}
 
 	public function admin_generate() {
-		$this->Session->setFlash('Feature disabled.  Use `cake acl_extras.acl_extras aco_sync` shell command');
-		$this->redirect(array('action' => 'index'));
-
-		$aco =& $this->Acl->Aco;
-		$root = $aco->node('controllers');
-		if (!$root) {
-			$aco->create(array(
-				'parent_id' => null,
-				'model' => null,
-				'alias' => 'controllers',
-			));
-			$root = $aco->save();
-			$root['Aco']['id'] = $aco->id;
-		} else {
-			$root = $root[0];
-		}
-
-		$controllerPaths = $this->AclExtrasGenerate->listControllers();
-		foreach ($controllerPaths AS $controllerName => $controllerPath) {
-			$parentAco = $root['Aco']['id'];
-			if (strpos($controllerName, '/') !== false) {
-				list($pluginName, $controllerName) = explode('/', $controllerName);
-				$pluginNode = $aco->node('controllers/'.$pluginName);
-				if (!$pluginNode) {
-					$aco->create(array(
-						'parent_id' => $root['Aco']['id'],
-						'model' => null,
-						'alias' => $pluginName,
-					));
-					$pluginNode = $aco->save();
-					$pluginNode['Aco']['id'] = $aco->id;
-					$log[] = 'Created Aco node for plugin ' . $pluginName;
-				} else {
-					$pluginNode = $pluginNode[0];
-				}
-				$parentAco = $pluginNode['Aco']['id'];
-			}
-			$controllerNodePath = 'controllers/';
-			if (!empty($pluginName)) {
-				$controllerNodePath .= $pluginName.'/'.$controllerName;
-			} else {
-				$controllerNodePath .= $controllerName;
-			}
-			$controllerNode = $aco->node($controllerNodePath);
-
-			if (!$controllerNode) {
-				$aco->create(array(
-					'parent_id' => $parentAco,
-					'model' => null,
-					'alias' => $controllerName,
-				));
-				$controllerNode = $aco->save();
-				$controllerNode['Aco']['id'] = $aco->id;
-				$log[] = 'Created Aco node for '.$controllerName;
-			} else {
-				$controllerNode = $controllerNode[0];
-			}
-
-			$methods = $this->AclExtrasGenerate->listActions($controllerName, $controllerPath);
-			foreach ($methods AS $method) {
-				$methodNode = $aco->node('controllers/'.$controllerName.'/'.$method);
-				if (!$methodNode) {
-					$aco->create(array(
-						'parent_id' => $controllerNode['Aco']['id'],
-						'model' => null,
-						'alias' => $method,
-					));
-					$methodNode = $aco->save();
-				}
-			}
-		}
+		App::uses('AclExtras', 'AclExtras.Lib');
+		$AclExtras = new AclExtras();
+		$AclExtras->startup($this);
+		$AclExtras->aco_sync();
 
 		if (isset($this->params['named']['permissions'])) {
-			$this->redirect(array('plugin' => 'acl', 'controller' => 'acl_permissions', 'action' => 'index'));
+			$this->redirect(array('plugin' => 'acl_extras', 'controller' => 'acl_extras_permissions', 'action' => 'index'));
 		} else {
 			$this->redirect(array('action' => 'index'));
 		}
