@@ -1,11 +1,12 @@
 <?php
 
-Croogo::hookHelper('*', 'AclExtras.AclExtras');
-
-Croogo::hookBehavior('User', 'AclExtras.UserAro');
-Croogo::hookBehavior('Role', 'AclExtras.RoleAro');
-
 if (Configure::read('Site.acl_plugin') == 'AclExtras') {
+
+	Croogo::hookComponent('*', 'AclExtras.AclExtrasFilter');
+	Croogo::hookHelper('*', 'AclExtras.AclExtras');
+
+	Croogo::hookBehavior('User', 'AclExtras.UserAro');
+	Croogo::hookBehavior('Role', 'AclExtras.RoleAro');
 
 	CroogoNav::remove('users.children.roles');
 	CroogoNav::add('users.children.roles', array(
