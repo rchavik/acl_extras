@@ -8,7 +8,6 @@ if (Configure::read('Site.acl_plugin') == 'AclExtras') {
 	Croogo::hookBehavior('User', 'AclExtras.UserAro');
 	Croogo::hookBehavior('Role', 'AclExtras.RoleAro');
 
-	CroogoNav::remove('users.children.roles');
 	CroogoNav::add('users.children.roles', array(
 		'title' => 'Roles',
 		'url' => array(
@@ -19,7 +18,6 @@ if (Configure::read('Site.acl_plugin') == 'AclExtras') {
 		'weight' => 20,
 		));
 
-	CroogoNav::remove('users.children.permissions');
 	CroogoNav::add('users.children.permissions', array(
 		'title' => 'Permissions',
 		'url' => array(
