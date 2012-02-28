@@ -22,6 +22,7 @@
             $actions  = $this->Html->link(__('Edit'), array('controller' => 'acl_extras_roles', 'action' => 'edit', $role['Role']['id']));
             $actions .= ' ' . $this->Layout->adminRowActions($role['Role']['id']);
             $actions .= ' ' . $this->Html->link(__('Delete'), array(
+                'plugin' => false,
                 'controller' => 'roles',
                 'action' => 'delete',
                 $role['Role']['id'],
