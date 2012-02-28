@@ -119,7 +119,7 @@ class AclExtrasPermissionsController extends AclExtrasAppController {
     
     function admin_upgrade() {
         App::import('Component', 'AclExtras.AclExtrasUpgrade');
-        $this->AclUpgrade = new AclUpgradeComponent;
+        $this->AclUpgrade = new AclUpgradeComponent($this->Components);
         $this->AclUpgrade->initialize($this);
         if (($errors = $this->AclUpgrade->upgrade()) === true) {
             $this->Session->setFlash(__('Acl Upgrade complete', true));
