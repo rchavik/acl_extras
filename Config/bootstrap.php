@@ -3,6 +3,11 @@
 if (Configure::read('Site.acl_plugin') == 'AclExtras') {
 
 	Croogo::hookComponent('*', 'AclExtras.AclExtrasFilter');
+	Croogo::hookComponent('*', array(
+		'CroogoAccess' => array(
+			'className' => 'AclExtras.AclExtrasAccess',
+			),
+		));
 	Croogo::hookHelper('*', 'AclExtras.AclExtras');
 
 	Croogo::hookBehavior('User', 'AclExtras.UserAro');
