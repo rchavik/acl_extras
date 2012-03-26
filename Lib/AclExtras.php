@@ -83,7 +83,7 @@ class AclExtras extends Object {
 	}
 
 	public function out($msg) {
-		if (!empty($this->controller)) {
+		if (!empty($this->controller->Session)) {
 			$this->controller->Session->setFlash($msg);
 		} else {
 			return $this->Shell->out($msg);
@@ -91,7 +91,7 @@ class AclExtras extends Object {
 	}
 
 	public function err($msg) {
-		if (!empty($this->controller)) {
+		if (!empty($this->controller->Session)) {
 			$this->controller->Session->setFlash($msg);
 		} else {
 			return $this->Shell->err($msg);
