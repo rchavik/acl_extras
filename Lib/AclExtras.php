@@ -74,6 +74,7 @@ class AclExtras extends Object {
  * @return void
  **/
 	public function startup($controller = null) {
+		$controller = new Controller();
 		$collection = new ComponentCollection();
 		$this->Acl = new AclComponent($collection);
 		$this->Acl->startup($controller);
