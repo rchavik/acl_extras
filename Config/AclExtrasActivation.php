@@ -6,26 +6,26 @@ class AclExtrasActivation {
 		return true;
 	}
 
- public function onActivation($controller) {
+	public function onActivation($controller) {
 
-	$Setting = ClassRegistry::init('Setting');
+		$Setting = ClassRegistry::init('Setting');
 
-	$setting = $Setting->find('first', array(
-		'conditions' => array(
-			'key' => 'Site.acl_plugin',
-			),
-		));
-
-	if (empty($setting)) {
-		$setting = $Setting->create(array(
-			'key' => 'Site.acl_plugin',
-			'value' => Configure::read('Site.acl_plugin'),
-			'title' => 'Acl Plugin',
-			'description' => 'CamelCased Acl Plugin name to use. Make sure that plugin name is correct and active.',
-			'editable' => 1,
-			'weight' => 5,
+		$setting = $Setting->find('first', array(
+			'conditions' => array(
+				'key' => 'Site.acl_plugin',
+				),
 			));
-		$Setting->save($setting);
+
+		if (empty($setting)) {
+			$setting = $Setting->create(array(
+				'key' => 'Site.acl_plugin',
+				'value' => Configure::read('Site.acl_plugin'),
+				'title' => 'Acl Plugin',
+				'description' => 'CamelCased Acl Plugin name to use. Make sure that plugin name is correct and active.',
+				'editable' => 1,
+				'weight' => 5,
+				));
+			$Setting->save($setting);
 		}
 	}
 
