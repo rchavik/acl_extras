@@ -30,29 +30,43 @@ class AclExtrasFilterComponent extends Component {
 	 */
 	public function auth() {
 		//Configure AuthComponent
-		$this->controller->Auth->authenticate = array(
-			AuthComponent::ALL => array(
-				'userModel' => 'User',
-				'fields' => array(
-					'username' => 'username',
-					'password' => 'password',
+		$config = Configure::read('AclExtras');
+		if (empty($config['authenticate'])) {
+			$authenticate = array(
+				AuthComponent::ALL => array(
+					'userModel' => 'User',
+					'fields' => array(
+						'username' => 'username',
+						'password' => 'password',
+						),
+					'scope' => array(
+						'User.status' => 1,
+						),
 					),
-				'scope' => array(
-					'User.status' => 1,
-					),
-				),
-			'Form',
-			);
+				'Form',
+				);
+		} else {
+			$authenticate = $config['authenticate'];
+		}
+		$this->controller->Auth->authenticate = $authenticate;
+
 		$actionPath = 'controllers';
 		$this->controller->Auth->authorize = array(
 			AuthComponent::ALL => array('actionPath' => $actionPath),
 			'AclExtras.AclExtrasCached',
 			);
-		$this->controller->Auth->loginAction = array(
-			'plugin' => null,
-			'controller' => 'users',
-			'action' => 'login',
-		);
+
+		if (empty($config['loginAction'])) {
+			$loginAction = array(
+				'plugin' => null,
+				'controller' => 'users',
+				'action' => 'login',
+			);
+		} else {
+			$loginAction = $config['loginAction'];
+		}
+		$this->controller->Auth->loginAction = $loginAction;
+
 		$this->controller->Auth->logoutRedirect = array(
 			'plugin' => null,
 			'controller' => 'users',
