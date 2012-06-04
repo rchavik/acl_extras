@@ -74,7 +74,9 @@ class AclExtras extends Object {
  * @return void
  **/
 	public function startup($controller = null) {
-		$controller = new Controller();
+		if (!$controller) {
+			$controller = new Controller();
+		}
 		$collection = new ComponentCollection();
 		$this->Acl = new AclComponent($collection);
 		$this->Acl->startup($controller);
@@ -103,21 +105,26 @@ class AclExtras extends Object {
  *
  * @return void
  **/
-	function aco_sync() {
+	function aco_sync($params = array()) {
 		$this->_clean = true;
-		$this->aco_update();
+		$this->aco_update($params);
 	}
 /**
  * Updates the Aco Tree with new controller actions.
  *
  * @return void
  **/
-	function aco_update() {
+	function aco_update($params = array()) {
 		$root = $this->_checkNode($this->rootNode, $this->rootNode, null);
-		$controllers = $this->getControllerList();
-		$this->_updateControllers($root, $controllers);
 
-		$plugins = CakePlugin::loaded();
+		if (empty($params['plugin'])) {
+			$controllers = $this->getControllerList();
+			$this->_updateControllers($root, $controllers);
+			$plugins = CakePlugin::loaded();
+		} else {
+			$plugins = array($params['plugin']);
+		}
+
 		foreach ($plugins as $plugin) {
 			$controllers = $this->getControllerList($plugin);
 
