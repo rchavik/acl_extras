@@ -74,6 +74,9 @@ class AclExtras extends Object {
  * @return void
  **/
 	public function startup($controller = null) {
+		if (!$controller) {
+			$controller = new Controller();
+		}
 		$collection = new ComponentCollection();
 		$this->Acl = new AclComponent($collection);
 		$this->Acl->startup($controller);
@@ -82,7 +85,7 @@ class AclExtras extends Object {
 	}
 
 	public function out($msg) {
-		if (!empty($this->controller)) {
+		if (!empty($this->controller->Session)) {
 			$this->controller->Session->setFlash($msg);
 		} else {
 			return $this->Shell->out($msg);
