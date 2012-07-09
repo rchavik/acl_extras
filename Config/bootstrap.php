@@ -33,4 +33,9 @@ if (Configure::read('Site.acl_plugin') == 'AclExtras') {
 		'weight' => 30,
 		));
 
+	Cache::config('permissions', array(
+		'duration' => '+1 hour',
+		'path' => CACHE . 'queries',
+		'engine' => 'File',
+	));
 }
