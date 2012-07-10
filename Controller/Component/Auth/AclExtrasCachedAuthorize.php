@@ -97,7 +97,7 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 		}
 		foreach ($ids as $id) {
 			if (is_numeric($id)) {
-				$allowed = $this->_authorizeByContent($user['User'], $request);
+				$allowed = $this->_authorizeByContent($user['User'], $request, $id);
 			} else {
 				continue;
 			}
@@ -108,7 +108,7 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 		return $allowed;
 	}
 
-	protected function _authorizeByContent($user, CakeRequest $request) {
+	protected function _authorizeByContent($user, CakeRequest $request, $id) {
 		if (!isset($this->settings['actionMap'][$request->params['action']])) {
 			throw new CakeException(
 				__('_authorizeByContent() - Access of un-mapped action "%1$s" in controller "%2$s"',
@@ -117,12 +117,8 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 			));
 		}
 
-		if (empty($request->params['pass'][0])) {
-			return false;
-		}
-
 		$user = array($this->settings['userModel'] => $user);
-		$acoNode = $this->_getAco($request->params['pass'][0]);
+		$acoNode = $this->_getAco($id);
 		$alias = sprintf('%s.%s', $acoNode['model'], $acoNode['foreign_key']);
 		$action = $this->settings['actionMap'][$request->params['action']];
 
@@ -146,7 +142,7 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 		if (Configure::read('debug')) {
 			$status = $allowed ? ' allowed.' : ' denied.';
 			$cached = $hit ? ' (cache hit)' : ' (cache miss)';
-			CakeLog::write(LOG_ERR, $user['User']['username'] . ' - ' . $action . '/' . $request->params['pass'][0] . $status . $cached);
+			CakeLog::write(LOG_ERR, $user['User']['username'] . ' - ' . $action . '/' . $id . $status . $cached);
 		}
 		return $allowed;
 	}
