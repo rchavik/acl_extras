@@ -51,10 +51,17 @@ class AclExtrasFilterComponent extends Component {
 		$this->controller->Auth->authenticate = $authenticate;
 
 		$actionPath = 'controllers';
-		$this->controller->Auth->authorize = array(
-			AuthComponent::ALL => array('actionPath' => $actionPath),
-			'AclExtras.AclExtrasCached',
-			);
+		if (empty($config['authorize'])) {
+			$authorize = array(
+				AuthComponent::ALL => array(
+					'actionPath' => $actionPath
+				),
+				'AclExtras.AclExtrasCached',
+				);
+		} else {
+			$authorize = $config['authorize'];
+		}
+		$this->controller->Auth->authorize = $authorize;
 
 		if (empty($config['loginAction'])) {
 			$loginAction = array(
@@ -67,16 +74,27 @@ class AclExtrasFilterComponent extends Component {
 		}
 		$this->controller->Auth->loginAction = $loginAction;
 
-		$this->controller->Auth->logoutRedirect = array(
-			'plugin' => null,
-			'controller' => 'users',
-			'action' => 'login',
-		);
-		$this->controller->Auth->loginRedirect = array(
-			'plugin' => null,
-			'controller' => 'users',
-			'action' => 'index',
-		);
+		if (empty($config['logoutRedirect'])) {
+			$logoutRedirect = array(
+				'plugin' => null,
+				'controller' => 'users',
+				'action' => 'login',
+				);
+		} else {
+			$logoutRedirect = $config['logoutRedirect'];
+		}
+		$this->controller->Auth->logoutRedirect = $logoutRedirect;
+
+		if (empty($config['loginRedirect'])) {
+			$loginRedirect = array(
+				'plugin' => null,
+				'controller' => 'settings',
+				'action' => 'dashboard',
+				);
+		} else {
+			$loginRedirect = $config['loginRedirect'];
+		}
+		$this->controller->Auth->loginRedirect = $loginRedirect;
 
 		$user = $this->controller->Auth->user();
 		if (!empty($user['role_id']) && $user['role_id'] == 1) {
