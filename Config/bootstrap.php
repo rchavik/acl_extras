@@ -12,6 +12,7 @@ if (Configure::read('Site.acl_plugin') == 'AclExtras') {
 
 	Croogo::hookBehavior('User', 'AclExtras.UserAro');
 	Croogo::hookBehavior('Role', 'AclExtras.RoleAro');
+	Croogo::hookBehavior('Node', 'AclExtras.ControlledContents');
 
 	CroogoNav::add('users.children.roles', array(
 		'title' => 'Roles',
