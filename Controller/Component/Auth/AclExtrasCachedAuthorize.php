@@ -47,8 +47,10 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 		$this->mapActions($map);
 	}
 
-
-
+/**
+ * check request request authorization
+ *
+ */
 	public function authorize($user, CakeRequest $request) {
 		$allowed = false;
 		$Acl = $this->_Collection->load('Acl');
@@ -74,11 +76,14 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 		if (Configure::read('debug')) {
 			$status = $allowed ? ' allowed.' : ' denied.';
 			$cached = $hit ? ' (cache hit)' : ' (cache miss)';
-			CakeLog::write(LOG_ERROR, $user['User']['username'] . ' - ' . $action . $status . $cached);
+			CakeLog::write(LOG_ERR, $user['User']['username'] . ' - ' . $action . $status . $cached);
 		}
 
-		if ($allowed) {
-			$allowed = $this->_authorizeByContent($user, $request);
+		if ($allowed && !empty($request->params['pass'][0])) {
+			$id = $request->params['pass'][0];
+			if (is_numeric($id)) {
+				$allowed = $this->_authorizeByContent($user['User'], $request);
+			}
 		}
 
 		return $allowed;
@@ -87,7 +92,7 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 	protected function _authorizeByContent($user, CakeRequest $request) {
 		if (!isset($this->settings['actionMap'][$request->params['action']])) {
 			throw new CakeException(
-				__d('cake_dev', 'AclAuthorize::authorize() - Attempted access of un-mapped action "%1$s" in controller "%2$s"',
+				__('_authorizeByContent() - Access of un-mapped action "%1$s" in controller "%2$s"',
 				$request->action,
 				$request->controller
 			));
@@ -99,13 +104,32 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 
 		$user = array($this->settings['userModel'] => $user);
 		$acoNode = $this->_getAco($request->params['pass'][0]);
+		$alias = sprintf('%s.%s', $acoNode['model'], $acoNode['foreign_key']);
+		$action = $this->settings['actionMap'][$request->params['action']];
 
-		$Acl = $this->_Collection->load('Acl');
-		return $Acl->check(
-			$user,
-			$acoNode,
-			$this->settings['actionMap'][$request->params['action']]
-		);
+		$cacheName = 'permissions_content_' . strval($user['User']['id']);
+		if (($permissions = Cache::read($cacheName, 'permissions')) === false) {
+			$permissions = array();
+			Cache::write($cacheName, $permissions, 'permissions');
+		}
+
+		if (!isset($permissions[$alias][$action])) {
+			$Acl = $this->_Collection->load('Acl');
+			$allowed = $Acl->check($user, $acoNode, $action);
+			$permissions[$alias][$action] = $allowed;
+			Cache::write($cacheName, $permissions, 'permissions');
+			$hit = false;
+		} else {
+			$allowed = $permissions[$alias][$action];
+			$hit = true;
+		}
+
+		if (Configure::read('debug')) {
+			$status = $allowed ? ' allowed.' : ' denied.';
+			$cached = $hit ? ' (cache hit)' : ' (cache miss)';
+			CakeLog::write(LOG_ERR, $user['User']['username'] . ' - ' . $action . '/' . $request->params['pass'][0] . $status . $cached);
+		}
+		return $allowed;
 	}
 
 /**
