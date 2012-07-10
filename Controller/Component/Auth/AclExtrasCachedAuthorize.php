@@ -32,6 +32,7 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 		if (!empty($prefixes)) {
 			foreach ($prefixes as $prefix) {
 				$map = array_merge($map, array(
+					$prefix . '_process' => 'update',
 					$prefix . '_index' => 'read',
 					$prefix . '_add' => 'create',
 					$prefix . '_edit' => 'update',
@@ -79,13 +80,31 @@ class AclExtrasCachedAuthorize extends BaseAuthorize {
 			CakeLog::write(LOG_ERR, $user['User']['username'] . ' - ' . $action . $status . $cached);
 		}
 
-		if ($allowed && !empty($request->params['pass'][0])) {
-			$id = $request->params['pass'][0];
-			if (is_numeric($id)) {
-				$allowed = $this->_authorizeByContent($user['User'], $request);
-			}
+		if (!$allowed) {
+			return false;
 		}
 
+		$ids = array();
+		if ($request->is('get') && !empty($request->params['pass'][0])) {
+			$ids[] = $request->params['pass'][0];
+		} elseif ($request->is('post') || $request->is('put')) {
+			$model = Inflector::classify($request->params['controller']);
+			foreach ($request->data[$model] as $id => $flag) {
+				if (isset($flag['id']) && $flag['id'] == 1) {
+					$ids[] = $id;
+				}
+			}
+		}
+		foreach ($ids as $id) {
+			if (is_numeric($id)) {
+				$allowed = $this->_authorizeByContent($user['User'], $request);
+			} else {
+				continue;
+			}
+			if (!$allowed) {
+				break;
+			}
+		}
 		return $allowed;
 	}
 
